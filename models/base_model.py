@@ -2,7 +2,7 @@
 """ a module to create a base for all the classes to be used"""
 
 from datetime import datetime
-from json import dumps
+from models import storage
 from uuid import uuid4
 
 class BaseModel:
@@ -27,6 +27,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
 
     def __str__(self):
         """ a special method to define the string for the class """
@@ -37,16 +38,16 @@ class BaseModel:
         """ a method to save a class """
 
         self.updated_at = datetime.now()
+        storage.new(self)
+        storage.save()
     
     def to_dict(self):
         """ a method to get the dictionary representation of a class """
 
         new_dict = {"__class__": self.__class__.__name__}
         new_dict.update(self.__dict__)
-        print(self.__dict__)
         # convert the created_at and updated_at to strings
         new_dict["created_at"] = self.created_at.isoformat()
         new_dict["updated_at"] = self.updated_at.isoformat()
 
         return new_dict
-        
