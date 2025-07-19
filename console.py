@@ -25,6 +25,8 @@ class HBNBCommand(cmd.Cmd):
             "Amenity": Amenity,
             "State": State
      } # a dict containing all available classes and the corresponding string name
+
+    not_updatable = ['id', 'created_at', 'updated_at']  # create a list for items which cant be updated
     
     def emptyline(self):
         """  a method to define what happens when an empty line is pressed """
@@ -136,17 +138,19 @@ class HBNBCommand(cmd.Cmd):
         if len(args) == 0:
             print("** class name missing **")
             return
+        # get the value to be updated if it is surrounded by colons
         args = args[0].split('"')
         value = args[1] if len(args) >= 2 else None
-        args = args[0].split()
+        if value:
+            value = int(value) if args[1].isdigit() else value
+
+        args = args[0].split()  # deal with the rest of the argments
         if args[0] not in self.classes.keys():
             print("** class doesn't exist **")
             return
         if len(args) < 2:
             print("** instance id missing **")
             return
-
-        not_updatable = ['id', 'created_at', 'updated_at']  # create a list for items which cant be updated
 
         # get all instances and check for the instance to be updated
         all_instances = storage.all()
@@ -162,15 +166,107 @@ class HBNBCommand(cmd.Cmd):
             print("** attribute name missing **")
             return
         if not value and len(args) > 3:
-            value = args[3]
+            value = int(args[3]) if args[3].isdigit() else args[3]
         if not value:
             print("** value missing **")
             return
-        if args[2] in not_updatable:
+        if args[2] in self.not_updatable:
             return
 
         setattr(class_instance, args[2], value)
         class_instance.save()
+
+    def default(self, line):
+        """ a method to handle commands not specified in the prompt
+        Args:
+            line: the command
+        """
+
+        args = line.split('.')
+        if args[0] not in self.classes.keys():
+            print("** class doesn't exist **")
+            return
+        if len(args) == 1:
+            print("** function missing **")
+            return
+        
+        all_instance_dict = storage.all()  # get all instances
+
+        if args[1] == "all":
+            instance_list = []
+            for key, instance_dict in all_instance_dict.items():
+                if args[0] == key.split('.')[0]:
+                    instance_list.append(str(self.classes[args[0]](**instance_dict)))
+            if len(instance_list) == 0:
+                print("** no instance found **")
+            else:
+                print(instance_list)
+            return
+        
+        elif args[1] == "count":
+            instance_count = 0
+            for key, instance_dict in all_instance_dict.items():
+                if args[0] == key.split('.')[0]:
+                    instance_count += 1
+            if instance_count == 0:
+                print("** no instance found **")
+            else:
+                print(instance_count)
+            return
+        
+        # strip the arguments of the ( and ) then split the second argument based on the '"' and
+        # delete the empties then join it to the first arg 
+        other_args = args[1].strip("(").strip(")").split("\"")
+        unwanted = ["", ", "]  # characters which are not needed
+        edited_args = [x.strip("(") for x in other_args if x not in unwanted]
+        args = [args[0]] + edited_args
+
+        if args[1] == "show":
+            if len(args) < 3:
+                print("** instance id missing **")
+                return
+            class_key = f"{args[0]}.{args[2]}"
+            if class_key in all_instance_dict.keys():
+                print(self.classes[args[0]](**all_instance_dict[class_key]))
+            else:
+                print("** no instance found **")
+            return
+            
+        elif args[1] == "destroy":
+            if len(args) < 3:
+                print("** instance id missing **")
+                return
+            instance_key = f"{args[0]}.{args[2]}"
+            if instance_key in all_instance_dict.keys():
+                del all_instance_dict[instance_key]
+                storage.update_file(all_instance_dict)
+            else:
+                print("** no instance found **")
+            return
+
+        elif args[1] == "update":
+            if len(args) < 3:
+                print("** instance id missing **")
+                return
+            instance_key = f"{args[0]}.{args[2]}"
+            if instance_key in all_instance_dict.keys():
+                class_instance = self.classes[args[0]](**all_instance_dict[instance_key])
+                if len(args) < 4:
+                    print("** attribute name missing **")
+                    return
+                if len(args) < 5:
+                    print("** value missing **")
+                    return
+                if args[3] in self.not_updatable:
+                    return
+                args[4] = args[4].strip(", ")
+                value = int(args[4]) if args[4].isdigit() else args[4]
+                # set the attribute and print it
+                setattr(class_instance, args[3], value)
+                class_instance.save()
+            else:
+                print("** no instance found **")
+            return
 
 
 

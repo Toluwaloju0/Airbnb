@@ -42,5 +42,6 @@ class FileStorage:
     def update_file(self, cls_dict):
         """ a method to update the file with a new dictionary especially after a delete """
 
+        self.__object = cls_dict
         with open(self.__file_path, "w") as file:
             file.write(dumps(cls_dict))
