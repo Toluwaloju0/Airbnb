@@ -4,6 +4,12 @@
 import cmd
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
@@ -11,7 +17,13 @@ class HBNBCommand(cmd.Cmd):
 
     prompt = "(hbnb)"
     classes = {
-            "BaseModel": BaseModel
+            "BaseModel": BaseModel,
+            "User": User,
+            "Place": Place,
+            "City": City,
+            "Review": Review,
+            "Amenity": Amenity,
+            "State": State
      } # a dict containing all available classes and the corresponding string name
     
     def emptyline(self):
