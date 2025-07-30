@@ -1,0 +1,44 @@
+.container section.filters {
+    background-color: white;
+    height: 70px;
+    width: 100%;
+    border: 1px solid #DDDDDD;
+    border-radius: 4px;
+    align-content: center;
+    display: flow;
+}
+
+.container section button {
+    font-size: 18px;
+    background-color: #FF5A5F;
+    color: #FFFFFF;
+    height: 48px;
+    width: 20%;
+    border-radius: 4px;
+    margin-right: 20px;
+    margin-top: 9px;
+    float: right;
+}
+
+.container section button:hover {
+    opacity: 90%;
+}
+
+.container section div.locations, .container section div.amenities {
+    height: 100%;
+    width: 25%;
+    float: left;
+    margin-left: 10px;
+    h3 {
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+    h4 {
+        font-size: 14px;
+        margin-top: 2px;
+    }
+}
+
+.container section div.locations{
+    border-right: 1px solid  #DDDDDD;
+}
