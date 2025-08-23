@@ -12,7 +12,7 @@ class State(BaseModel, Base):
     __tablename__ = "states"
 
     name: Mapped[str] = mapped_column(String(128), nullable=False)
-    cities: Mapped[List["State"]] = relationship(back_populates="state", cascade="delete, delete-orphan")
+    cities: Mapped[List["City"]] = relationship(back_populates="state", cascade="delete, delete-orphan")
 
     @property
     def cities(self):
