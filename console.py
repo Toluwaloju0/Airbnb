@@ -51,10 +51,25 @@ class HBNBCommand(cmd.Cmd):
             print("** class name missing **")
             return
 
+        args = args[0].split(" ")  # split the arguments by removing the spaces
+
         if args[0] not in self.classes.keys():
             print("** class doesn't exist **")
             return
-        model = self.classes[args[0]]()
+        
+        # create a dict to store the key and value pairs
+        class_dict = {}
+        for a in range (1, len(args)):
+            if args[a].startswith(""):
+                attribute = args[a].replace("\"", "").split("=")
+                key, value = attribute[0], attribute[1]
+            else:
+                attribute = args[a].split("=")
+                key = attribute[0]
+                value = float(attribute[1]) if args[a].find(".") > 0 else int(attribute[1])
+            class_dict[key] = value
+        
+        model = self.classes[args[0]](**class_dict)  # create a clas from the data provided
         model.save()
         print(model.id)
         return
@@ -123,7 +138,7 @@ class HBNBCommand(cmd.Cmd):
                 return
 
         # get all class instances using storage instance
-        all_instance = storage.all()
+        all_instance = storage.all() if len(args) == 0 else storage.all(self.classes[args[0]])
 
         # create a list and save the instances classes to it
         class_list = []
