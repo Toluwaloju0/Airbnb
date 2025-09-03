@@ -59,3 +59,8 @@ class FileStorage:
             return
         del self.__object[f"{obj.__class__.__name__}.{obj.id}"]
         self.update_file(self.__object)
+
+    def close(self):
+        """ a method to close the class instance """
+
+        self.reload()

@@ -15,8 +15,8 @@ class BaseModel:
     """ the base class"""
 
     id: Mapped[str] = mapped_column(String(60), primary_key=True, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
-    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow())
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
 
     def __init__(self, *args, **kwargs):
         """ the initializer for the class attributes

@@ -15,3 +15,4 @@ class City(BaseModel, Base):
 
 
     places: Mapped["Place"] = relationship(back_populates="cities", cascade="delete, delete-orphan")
+    state: Mapped["State"] = relationship(back_populates="cities")

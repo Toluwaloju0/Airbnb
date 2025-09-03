@@ -86,3 +86,8 @@ class DBStorage():
         self.__session = Session(expire_on_commit=False)
 
         self.classes = [State, City, User, Place, Amenity, Review]  # a list of all the classes for a complete query
+        
+    def close(self):
+        """ a method to close the class instance """
+
+        self.__session.close

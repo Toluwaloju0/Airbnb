@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 """ a module to define the state class """
+import os
 
 from models.base_model import BaseModel, Base
 from sqlalchemy import String
@@ -12,10 +13,20 @@ class State(BaseModel, Base):
     __tablename__ = "states"
 
     name: Mapped[str] = mapped_column(String(128), nullable=False)
-    cities: Mapped[List["City"]] = relationship(back_populates="state", cascade="delete, delete-orphan")
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        cities: Mapped[List["City"]] = relationship(back_populates="state", cascade="delete, delete-orphan")
+    else:
+        @property
+        def cities(self):
+            """ a getter to get all available cities in a state"""
 
-    @property
-    def cities(self):
-        """ a getter to get all available cities in a state"""
+            from models import storage
+            from models.city import City
 
-        return self.cities
+            all_cities = storage.all(City)
+
+            cities = []
+            for key, city in all_cities.items:
+                if city.state_id == self.id:
+                    cities.append(city)
+            return cities
